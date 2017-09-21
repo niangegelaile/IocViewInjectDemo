@@ -35,7 +35,7 @@ public class ProxyInfo
         StringBuilder builder = new StringBuilder();
         builder.append("// Generated code. Do not modify!\n");
         builder.append("package ").append(packageName).append(";\n\n");
-        builder.append("import com.zhy.ioc.*;\n");
+        builder.append("import com.ange.ioc_api.*;\n");
         builder.append('\n');
 
         builder.append("public class ").append(proxyClassName).append(" implements " + ProxyInfo.PROXY + "<" + typeElement.getQualifiedName() + ">");

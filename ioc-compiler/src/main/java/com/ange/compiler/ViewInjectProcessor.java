@@ -94,6 +94,12 @@ public class ViewInjectProcessor extends AbstractProcessor {
         return SourceVersion.latestSupported();
     }
 
+    /**
+     * 判断注解的地方是否合法
+     * @param annotatedElement
+     * @param clazz
+     * @return
+     */
     private boolean checkAnnotationValid(Element annotatedElement , Class clazz){
         if(annotatedElement.getKind()!= ElementKind.FIELD){
             error(annotatedElement,"%s must be declared on field.",clazz.getSimpleName());
