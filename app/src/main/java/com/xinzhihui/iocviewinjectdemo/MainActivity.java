@@ -9,7 +9,7 @@ import com.ange.ioc_api.ViewInjector;
 
 public class MainActivity extends AppCompatActivity {
     @Bind(R.id.tv_hello)
-   private TextView textView;
+   TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
