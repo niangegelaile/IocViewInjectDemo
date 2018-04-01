@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.view.View;
 
 /**
+ *
  * Created by zhy on 16/4/22.
  */
 public class ViewInjector
 {
     private static final String SUFFIX = "$$ViewInject";
 
+    /**
+     * 静态方法：先找出该activity的代理类名通过反射生成代理类实例
+     * @param activity
+     */
     public static void injectView(Activity activity)
     {
         ViewInject proxyActivity = findProxyActivity(activity);

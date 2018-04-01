@@ -5,5 +5,10 @@ package com.ange.ioc_api;
  */
 
 public interface ViewInject<T> {
+    /**
+     *
+     * @param t 宿主
+     * @param source view/activity
+     */
     void inject(T t,Object source);
 }
