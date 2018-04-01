@@ -30,8 +30,8 @@ import javax.tools.JavaFileObject;
 @AutoService(Processor.class)
 public class ViewInjectProcessor extends AbstractProcessor {
 
-    private Messager messager;
-    private Elements elementUtils;
+    private Messager messager;//用来打印日志消息
+    private Elements elementUtils;//元素
     private Map<String,ProxyInfo> mProxyMap=new HashMap<>();
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -45,26 +45,36 @@ public class ViewInjectProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         messager.printMessage(Diagnostic.Kind.NOTE,"process...");
         mProxyMap.clear();
+        //获取被@Bind标注的元素
         Set<? extends Element> elementsBind= roundEnvironment.getElementsAnnotatedWith(Bind.class);
         for (Element element:elementsBind){
+            //判断被注解的变量是否合法
             checkAnnotationValid(element,Bind.class);
-            //变量
+            //变量 被绑定的变量
             VariableElement variableElement= (VariableElement) element;
-            //变量所在的类
+            //变量所在的类，这个类也是一个元素
             TypeElement classElement= (TypeElement) variableElement.getEnclosingElement();
             //类的全名
             String fgClassName=classElement.getQualifiedName().toString();
 
-            ProxyInfo proxyInfo=mProxyMap.get(fgClassName);
+            ProxyInfo proxyInfo=mProxyMap.get(fgClassName);//用这个类的全名作为HashMap的Key
             if(proxyInfo==null){
                 proxyInfo=new ProxyInfo(elementUtils,classElement);
                 mProxyMap.put(fgClassName,proxyInfo);
             }
             Bind bindAnnotation =variableElement.getAnnotation(Bind.class);
-            int id=bindAnnotation.value();
+            int id=bindAnnotation.value();//获取注解的value值
             proxyInfo.injectVariables.put(id,variableElement);
-
         }
+        createSourceFileByProxyMap(mProxyMap);
+        return true;
+    }
+
+    /**
+     * 根据ProxyMap创建源文件
+     * @param mProxyMap
+     */
+    private void createSourceFileByProxyMap(Map<String,ProxyInfo> mProxyMap){
         for(String key:mProxyMap.keySet()){
             ProxyInfo proxyInfo=mProxyMap.get(key);
             try {
@@ -80,8 +90,15 @@ public class ViewInjectProcessor extends AbstractProcessor {
                         proxyInfo.getTypeElement(), e.getMessage());
             }
         }
-        return true;
+
+
     }
+
+
+
+
+
+
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -102,11 +119,11 @@ public class ViewInjectProcessor extends AbstractProcessor {
      * @return
      */
     private boolean checkAnnotationValid(Element annotatedElement , Class clazz){
-        if(annotatedElement.getKind()!= ElementKind.FIELD){
+        if(annotatedElement.getKind()!= ElementKind.FIELD){//判断是否是一个元素
             error(annotatedElement,"%s must be declared on field.",clazz.getSimpleName());
             return false;
         }
-        if(ClassValidator.isPrivate(annotatedElement)){
+        if(ClassValidator.isPrivate(annotatedElement)){//判断该元素不能是private
             error(annotatedElement,"%s() must can not be private.",annotatedElement.getSimpleName());
             return false;
         }

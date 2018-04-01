@@ -10,9 +10,9 @@ import javax.lang.model.util.Elements;
 
 public class ProxyInfo
 {
-    private String packageName;
-    private String proxyClassName;
-    private TypeElement typeElement;
+    private String packageName;     //宿主类的包名
+    private String proxyClassName;  //生成代理类名
+    private TypeElement typeElement;//有注解元素的类（宿主类）
 
     public Map<Integer, VariableElement> injectVariables = new HashMap<>();
 
@@ -22,7 +22,7 @@ public class ProxyInfo
     {
         this.typeElement = classElement;
         PackageElement packageElement = elementUtils.getPackageOf(classElement);
-        String packageName = packageElement.getQualifiedName().toString();
+        String packageName = packageElement.getQualifiedName().toString();//
         //classname
         String className = ClassValidator.getClassName(classElement, packageName);
         this.packageName = packageName;
@@ -80,6 +80,10 @@ public class ProxyInfo
 
     }
 
+    /**
+     * 代理类的文件名
+     * @return
+     */
     public String getProxyClassFullName()
     {
         return packageName + "." + proxyClassName;
